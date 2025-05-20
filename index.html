@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Internet Usage Visualization - David Murphy</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Load Three.js libraries first -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.7.0/dist/gsap.min.js"></script>
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2>Loading Global Data</h2>
+            <p>Preparing interactive visualization...</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-text">Global Internet Usage</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#visualization">Visualization</a></li>
+                    <li><a href="#data">Data</a></li>
+                    <li>
+                        <span style="display: flex; align-items: center; gap: 0.5em;">
+                            <a href="https://github.com/dmrph" target="_blank" title="GitHub" style="display:inline-block; vertical-align:middle;">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 22px; height: 22px; vertical-align:middle; filter: brightness(0) invert(1);">
+                            </a>
+                            <a href="https://linkedin.com/in/dmrph" target="_blank" title="LinkedIn" style="display:inline-block; vertical-align:middle;">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 22px; height: 22px; vertical-align:middle;">
+                            </a>
+                        </span>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1>Global Internet Usage Visualization</h1>
+            <p class="subtitle">Explore interactive 3D data on internet usage by country and continent</p>
+            <div class="cta-buttons">
+                <a href="#about" class="cta-button primary">About</a>
+                <a href="#visualization" class="cta-button secondary">Explore Data</a>
+            </div>
+            <div class="cta-socials" style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1.5rem;">
+                <a href="https://github.com/dmrph" target="_blank" title="GitHub" style="display:inline-block;">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 32px; height: 32px; filter: brightness(0) invert(1);">
+                </a>
+                <a href="https://linkedin.com/in/dmrph" target="_blank" title="LinkedIn" style="display:inline-block;">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 32px; height: 32px;">
+                </a>
+            </div>
+        </div>
+        <div class="hero-background">
+            <canvas id="hero-canvas"></canvas>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About This Project</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>This interactive 3D visualization displays global internet usage data across continents and countries. The visualization uses real-world data to show internet penetration rates around the world.</p>
+                    <p>The project demonstrates:</p>
+                    <ul>
+                        <li>3D visualization with Three.js</li>
+                        <li>Real-time data processing and integration</li>
+                        <li>Interactive user controls and animations</li>
+                        <li>Responsive design for all devices</li>
+                        <li>Modern UI/UX principles</li>
+                    </ul>
+                </div>
+                <div class="about-image">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="icon-globe"></i>
+                        </div>
+                        <h3>Global Coverage</h3>
+                        <p>Data from countries across all continents</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="icon-chart"></i>
+                        </div>
+                        <h3>Real Data</h3>
+                        <p>Based on World Bank internet usage statistics</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="icon-interactive"></i>
+                        </div>
+                        <h3>Interactive</h3>
+                        <p>Explore data with intuitive controls</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="visualization" id="visualization">
+        <div class="container">
+            <h2>Interactive 3D Visualization</h2>
+            <div class="visualization-container">
+                <div class="visualization-canvas-container">
+                    <canvas id="visualization-canvas"></canvas>
+                    <div class="visualization-controls">
+                        <div class="control-group">
+                            <button id="rotate-left" class="control-button"><span class="icon-left"></span></button>
+                            <button id="rotate-right" class="control-button"><span class="icon-right"></span></button>
+                        </div>
+                        <div class="control-group">
+                            <button id="zoom-in" class="control-button"><span class="icon-plus"></span></button>
+                            <button id="zoom-out" class="control-button"><span class="icon-minus"></span></button>
+                        </div>
+                        <div class="control-group">
+                            <button id="reset-view" class="control-button"><span class="icon-reset"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="how-to-use-inline how-to-use-under-globe">
+                    <div class="how-to-content">
+                        <div class="how-to-text">
+                            <h2>How to Use This Visualization</h2>
+                            <ul>
+                                <li><strong>Rotate the globe</strong> by dragging with your mouse or using the arrow buttons.</li>
+                                <li><strong>Zoom in and out</strong> with your mouse wheel or the plus/minus buttons.</li>
+                                <li><strong>Click on a country</strong> to see detailed internet usage statistics in the sidebar.</li>
+                                <li>Hover over markers for quick tooltips.</li>
+                                <li>Use the sidebar to explore global and continental statistics.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="visualization-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Global Statistics</h3>
+                        <div class="stat-container">
+                            <div class="stat-item">
+                                <div class="stat-value" id="global-average">59.5%</div>
+                                <div class="stat-label">Global Internet Usage</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="highest-continent">Europe</div>
+                                <div class="stat-label">Highest Usage Continent</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="lowest-continent">Africa</div>
+                                <div class="stat-label">Lowest Usage Continent</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-section">
+                        <h3>Selected Country</h3>
+                        <div class="country-details" id="country-details">
+                            <p class="select-prompt">Click on a country to see details</p>
+                        </div>
+                    </div>
+                    <div class="sidebar-section legend-section">
+                        <h3>Legend</h3>
+                        <div class="legend-item">
+                            <span class="legend-marker" style="background: #6c5ce7; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Marker size: Internet usage %</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #3498db; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Blue: North America</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #2ecc71; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Green: South America</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #9b59b6; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Purple: Europe</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #e74c3c; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Red: Asia</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #f39c12; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Orange: Africa</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #1abc9c; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px;"></span>
+                            <span>Teal: Oceania</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ecf0f1; width: 18px; height: 18px; border-radius: 50%; display: inline-block; margin-right: 8px; border: 1px solid #ccc;"></span>
+                            <span>White: Antarctica</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="continental-breakdown-group">
+            <h2 class="continental-breakdown-heading">Continental Breakdown</h2>
+            <div class="continental-breakdown-desc">
+                The boxes below show the average internet usage rate for each continent. Each value is the mean percentage of the population using the internet in each country within that continent.
+            </div>
+            <div class="continental-breakdown-horizontal" id="continental-breakdown-horizontal">
+                <!-- Boxes will be populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <section class="data" id="data">
+        <div class="container">
+            <h2>Data Sources & Methodology</h2>
+            <div class="data-content">
+                <div class="data-text">
+                    <h3>Data Sources</h3>
+                    <p>This visualization uses internet usage data from the World Bank's "Individuals using the Internet (% of population)" dataset. The data represents the percentage of individuals in each country who have used the internet from any location in the last three months.</p>
+                    
+                    <h3>Methodology</h3>
+                    <p>The visualization processes and displays the most recent available data for each country. Countries are grouped by continent, with each continent assigned a distinct color for easy identification. The size of each data point represents the percentage of internet users in that country.</p>
+                    
+                    <h3>Technical Implementation</h3>
+                    <p>The 3D globe is built using Three.js, a powerful JavaScript library for creating 3D graphics in the browser. The visualization includes custom shaders, dynamic lighting, and interactive controls for an immersive user experience.</p>
+                </div>
+                <div class="data-stats">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h4>Top 5 Countries</h4>
+                        </div>
+                        <div class="stat-body">
+                            <table class="stat-table" id="top-countries">
+                                <!-- Dynamically populated -->
+                            </table>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <h4>Continental Averages</h4>
+                        </div>
+                        <div class="stat-body">
+                            <table class="stat-table" id="continent-averages">
+                                <!-- Dynamically populated -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>David Murphy</h3>
+                    <p>B.S. in Computer Science, Penn State University</p>
+                    <p>Interactive 3D Data Visualization Project</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="https://github.com/dmrph" target="_blank">GitHub</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#visualization">Visualization</a></li>
+                        <li><a href="#data">Data</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact</h3>
+                    <p>Connect with me:</p>
+                    <div class="footer-socials" style="display: flex; gap: 1.2rem; align-items: center; margin-top: 0.5rem;">
+                        <a href="https://github.com/dmrph" target="_blank" title="GitHub" style="display:inline-block;">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 28px; height: 28px; filter: brightness(0) invert(1);">
+                        </a>
+                        <a href="https://linkedin.com/in/dmrph" target="_blank" title="LinkedIn" style="display:inline-block;">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 28px; height: 28px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 David Murphy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts - Load in correct order -->
+    <script src="js/continent-mapping.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/visualization.js"></script>
+    <script src="js/enhanced-visualization.js"></script>
+    <script src="js/hero-animation.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- Initialization script to ensure everything loads properly -->
+    <script>
+        // Check if Three.js is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            
+            // Verify Three.js is loaded
+            if (typeof THREE === 'undefined') {
+                console.error('THREE is not defined! Three.js library failed to load.');
+                alert('Error: Three.js library failed to load. Please check your internet connection and try again.');
+                return;
+            }
+            
+            console.log('THREE is loaded:', typeof THREE);
+            
+            // Verify OrbitControls is loaded
+            if (typeof THREE.OrbitControls === 'undefined') {
+                console.error('THREE.OrbitControls is not defined! OrbitControls extension failed to load.');
+                alert('Error: Three.js OrbitControls extension failed to load. Please check your internet connection and try again.');
+                return;
+            }
+            
+            console.log('OrbitControls is loaded:', typeof THREE.OrbitControls);
+            
+            // Initialize visualization canvas
+            const visualizationCanvas = document.getElementById('visualization-canvas');
+            if (!visualizationCanvas) {
+                console.error('Visualization canvas not found!');
+                return;
+            }
+            
+            console.log('Visualization canvas found:', visualizationCanvas);
+            
+            // Force initialization of visualization
+            if (typeof initVisualization === 'function') {
+                console.log('Initializing visualization...');
+                try {
+                    window.visualization = new EnhancedGlobeVisualization('visualization-canvas');
+                    console.log('Visualization initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing visualization:', error);
+                    alert('Error initializing visualization. Please check the console for details.');
+                }
+            } else {
+                console.error('initVisualization function not found!');
+            }
+        });
+    </script>
+</body>
+</html>
